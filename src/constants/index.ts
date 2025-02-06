@@ -1,4 +1,4 @@
-import { NextAuthOptions, User } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import axios from "axios";

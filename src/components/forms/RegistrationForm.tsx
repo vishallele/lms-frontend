@@ -25,6 +25,7 @@ const RegisterValidationSchema = z.object({
   fullName: z.string({ message: 'Full name is required field' }).nonempty({ message: 'Full name is required field' }),
   email: z.string({ message: "Email field is required" }).nonempty({ message: 'Email field is required' })
     .email({ message: 'Enter valid email address' })
+    //@TODO : use debounce features to stop concurrent request to server for checking email.
     .refine(async (email) => {
       const isUser = await axios.get(`/api/auth/register?email=${email}`)
         .then((data) => data.data)
@@ -48,7 +49,7 @@ const RegistrationForm = () => {
   const { openNotification, closeNotification } = useNotification();
   const [submitting, isSubmitting] = useState<boolean>(false);
   const { handleSubmit, control, formState: { errors } } = useForm<IRegisterFormInputs>({
-    resolver: zodResolver(RegisterValidationSchema), mode: "all"
+    resolver: zodResolver(RegisterValidationSchema), mode: "onSubmit"
   });
 
   const OnSubmit: SubmitHandler<IRegisterFormInputs> = async (data, e) => {

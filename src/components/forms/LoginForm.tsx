@@ -6,9 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Input, Button, Link } from "@heroui/react";
 
 //custom component imports
-import { Input, Button } from "@heroui/react";
 import { GoogleSvg, FacebookSvg } from "../svgs";
 import Notification from "../notification";
 import useNotification from "@/hooks/useNotification";
@@ -91,6 +91,9 @@ const LoginForm = () => {
               />
             )}
           />
+          <div className="flex justify-end items-center w-full">
+            <Link className="text-sky-500 font-bold" href="/forgot-password">Forgot Password?</Link>
+          </div>
           {errors.password && <p className="text-medium font-semibold text-red-600 mt-2">{errors.password.message}</p>}
         </div>
         <Button
