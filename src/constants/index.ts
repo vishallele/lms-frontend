@@ -4,6 +4,9 @@ import Google from "next-auth/providers/google";
 import axios from "axios";
 import Facebook from "next-auth/providers/facebook";
 
+//custom import
+import { getCsrfToken } from "@/lib/helper";
+
 export const AuthOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -19,8 +22,8 @@ export const AuthOptions: NextAuthOptions = {
         }
 
         //get csrf token cookie
-        const csrf_res = await axios.get(`${process.env.BACKEND_SERVER_URL}sanctum/csrf-cookie`);
-        const csrf_token = getCsrfToken(csrf_res);
+        //const csrf_res = await axios.get(`${process.env.BACKEND_SERVER_URL}sanctum/csrf-cookie`);
+        const csrfToken = await getCsrfToken();
 
         //post login request to server
         try {
@@ -30,7 +33,7 @@ export const AuthOptions: NextAuthOptions = {
             {
               headers: {
                 'Content-Type': "application/json",
-                'X-XSRF-TOKEN': csrf_token
+                'X-XSRF-TOKEN': csrfToken
               }
             }
           ).then((data) => data.data).catch((error) => error.response);
@@ -167,8 +170,4 @@ export const AuthOptions: NextAuthOptions = {
 
     }
   }
-}
-
-const getCsrfToken = (response: any) => {
-  return decodeURIComponent(response.headers['set-cookie'][0].split(';')[0].replace('XSRF-TOKEN=', ''));
 }

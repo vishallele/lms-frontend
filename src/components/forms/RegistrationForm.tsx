@@ -6,13 +6,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import axios from "axios";
 
 //custom component imports
 import { Input, Button } from "@heroui/react";
 import { GoogleSvg, FacebookSvg } from "../svgs";
 import Notification from "../notification";
 import useNotification from "@/hooks/useNotification";
+import { register, CheckUserExistsOrNot } from "@/actions/auth";
 
 interface IRegisterFormInputs {
   fullName: string;
@@ -27,10 +27,8 @@ const RegisterValidationSchema = z.object({
     .email({ message: 'Enter valid email address' })
     //@TODO : use debounce features to stop concurrent request to server for checking email.
     .refine(async (email) => {
-      const isUser = await axios.get(`/api/auth/register?email=${email}`)
-        .then((data) => data.data)
-        .catch((error) => error);
-      if (isUser.body) {
+      const userExist = await CheckUserExistsOrNot(email);
+      if (userExist) {
         return false;
       }
       return true;
@@ -60,12 +58,8 @@ const RegistrationForm = () => {
     isSubmitting(true);
 
     try {
-      const response = await axios.post(
-        `/api/auth/register`,
-        data
-      ).then((data) => data.data).catch(error => error.response);
-
-      if (!response.body.uid) {
+      const user = await register(data);
+      if (!user.uid) {
         throw new Error("Failed to create account.");
       }
 

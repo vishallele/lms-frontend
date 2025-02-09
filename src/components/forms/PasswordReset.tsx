@@ -4,13 +4,13 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import axios from "axios";
 import { useSearchParams } from "next/navigation";
 
 //custom component imports
 import { Input, Button } from "@heroui/react";
 import Notification from "../notification";
 import useNotification from "@/hooks/useNotification";
+import { resetPassword } from "@/actions/auth";
 
 interface IPasswordResetFormInputs {
   password: string;
@@ -56,17 +56,15 @@ const PasswordResetForm: React.FC<PasswordResetProps> = ({ token }) => {
     isSubmitting(true);
 
     try {
-      const response = await axios.post(
-        `/api/auth/reset-password`,
-        data
-      ).then((data) => data.data).catch(error => error.response.data);
 
-      if (response.error) {
-        throw new Error(response.error);
+      const passwordResetRes = await resetPassword(data);
+
+      if (passwordResetRes.error) {
+        throw new Error(passwordResetRes.error);
       }
 
       isSubmitting(false);
-      openNotification(`${response.body}`, 'success');
+      openNotification(`${passwordResetRes.success}`, 'success');
 
     } catch (err) {
       openNotification(`${err}`, 'danger');

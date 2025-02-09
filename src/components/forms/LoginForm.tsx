@@ -91,8 +91,8 @@ const LoginForm = () => {
               />
             )}
           />
-          <div className="flex justify-end items-center w-full">
-            <Link className="text-sky-500 font-bold" href="/forgot-password">Forgot Password?</Link>
+          <div className="flex justify-end items-center w-full mt-3">
+            <Link className="text-black dark:text-sky-500 font-bold" href="/forgot-password">Forgot Password?</Link>
           </div>
           {errors.password && <p className="text-medium font-semibold text-red-600 mt-2">{errors.password.message}</p>}
         </div>
